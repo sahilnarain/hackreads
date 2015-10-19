@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "hackreads",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "automate good reads giveaways",
+    "description": "The description of the application"
+  }
+}
