@@ -1,3 +1,6 @@
+'use strict'
+var async = require('async');
+
 var casper = require('casper').create({
 	verbose: true,
 	logLevel: 'debug',
@@ -13,58 +16,62 @@ var pages = [];
 var giveaways = [];
 
 var getPages = function(pageCounter) {
-	casper.waitForSelector('.next_page', function(){
-		var currentUrl = casper.evaluate(function() {
-			return document.URL;
-		})
-		pages.push(currentUrl);
+	casper.wait(Math.random()*7000, function() {
+		casper.waitForSelector('.next_page', function(){
+			var currentUrl = casper.evaluate(function() {
+				return document.URL;
+			})
+			pages.push(currentUrl);
 
-		//var giveawayCounter = 1;
-		//getGiveaways(currentUrl, giveawayCounter);
+			//var giveawayCounter = 1;
+			//getGiveaways(currentUrl, giveawayCounter);
 
-		casper.click('.next_page');
+			casper.click('.next_page');
 
-		if(JSON.stringify(casper.getElementsInfo('.next_page')[0].attributes.href)) {
-			pageCounter++;
-			getPages(pageCounter);
-		} else {
-			return;
-		}
-	});
+			if(JSON.stringify(casper.getElementsInfo('.next_page')[0].attributes.href)) {
+				pageCounter++;
+				getPages(pageCounter);
+			} else {
+				return;
+			}
+		});
+	})
 };
 
-/*
 var getGiveaways = function(currentUrl, giveawayCounter) {
+
 	var mainPageSelector = 'li.listElement:nth-child(' + giveawayCounter + ') > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)';
 	
 	try {
 			casper.click(mainPageSelector);
-			casper.waitForSelector('a[id^="addressSelect"]', function() {
-				casper.click('a[id^="addressSelect"]');
-				casper.waitForSelector('.gr-button', function() {
-					casper.evaluate(function() {
-						document.getElementById('terms').click();
-						document.getElementById('want_to_read').click();
+			casper.wait(Math.random()*7000, function() {
+				casper.waitForSelector('a[id^="addressSelect"]', function() {
+					casper.wait(Math.random()*7000, function() {
+						casper.click('a[id^="addressSelect"]');
+						casper.waitForSelector('.gr-button', function() {
+							casper.evaluate(function() {
+								document.getElementById('terms').click();
+								document.getElementById('want_to_read').click();
+							});
+							casper.wait(Math.random()*7000, function() {
+								casper.click('.gr-button');
+								casper.capture('/home/sahil/Desktop/'+currentUrl+giveawayCounter+'.png');
+							})
+						})
 					});
-					casper.click('.gr-button');
-					casper.waitForSelector('div.box:nth-child(1)', function(){
-						casper.capture('/home/sahil/Desktop/' + i + '.png');
-						casper.open(currentUrl);
-					})
-				})
-			});
+				});
+			})
+				
 		} catch(e) {
 			console.log(e);
 		}
-	console.log(mainPageSelector);
 }
-*/
 
 casper.start(url, function() {
 	this.waitForSelector('input.gr-button', function() {
 		this.evaluate(function() {
-			document.getElementById('user_email').value = 'YOUR_EMAIL';
-			document.getElementById('user_password').value = 'YOUR_PASSWORD';
+			document.getElementById('user_email').value = 'mile_ac@yahoo.com';
+			document.getElementById('user_password').value = 'goodreads';
 			document.querySelector('input.gr-button').click();
 		})
 	});
@@ -74,12 +81,11 @@ casper.start(url, function() {
 		getPages(i);
 	});
 
-	//Test only - remove during final run
 	this.then(function() {
-		for(var i=0;i<pages.length;i++) {
-			console.log(i);
-			console.log(pages[i]);
-		}
+		var i = 1;
+		async.each(pages, function(page) {
+			getGiveaways(page, i)
+		})
 	})
 });
 
