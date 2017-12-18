@@ -1,11 +1,11 @@
-#1: Open all pages
-javascript:x=document.querySelectorAll('a[href^="/giveaway?page"]');buttons=Array.prototype.slice.call(x,0);buttons.pop(buttons.length-1);buttons.forEach(function(node){window.open(node);});
+#1 Open all links on a page, if no links then click on NextPage
+javascript:javascript:var x=document.querySelectorAll('a[class="gr-button"]');buttons=Array.prototype.slice.call(x,0);if(!buttons.length){var y = document.querySelectorAll('a[class="next_page"]');y[0].click();};buttons.forEach(function(node){window.open(node);});
 
-#2: Open all links on a page
-javascript:var x=document.querySelectorAll('a[class="gr-button"]');buttons=Array.prototype.slice.call(x,0);buttons.forEach(function(node){window.open(node);});
+#2 Address
+javascript:var%20x=document.querySelector('a[id^="addressSelect"]').click();
 
-#3: Select addresses
-javascript:javascript:var%20x=document.querySelector('a[id^="addressSelect"]').click();
-
-#4: Accept T&C and submit
+#3 T&C and submit
 javascript:document.getElementById('termsCheckBox').click();document.getElementById('want_to_read').click();document.querySelector('input[type=submit]').click();document.querySelector('input[type="submit"][value="Enter Giveaway"]').click();
+
+#4 Close tab
+javascript:setTimeout(function(){window.close();},300);
